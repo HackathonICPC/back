@@ -1,23 +1,36 @@
-import json
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 from api import api_class
 
 app = FastAPI()
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 obj = api_class()
 
 a = "a"
 
-obj.sign_up("e", "c", "d")
-print(obj.sign_in("e", "c"))
+# obj.sign_up("e", "c", "d")
+# print(obj.sign_in("e", "c"))
 
-@app.get("/")
-def f():
-    print(obj.get_id("e"))
-    return HTMLResponse(f"1")
+# @app.get("/")
+# async def f():
+#     print(obj.get_id("e"))
+#     return HTMLResponse(f"1")
 
-@app.post("/api/signup")
-def f():
-    obj.sign_up("z", "z", "z")
-    return HTMLResponse("2")
+# @app.post("/api/signup")
+# def f():
+#     obj.sign_up("z", "z", "z")
+#     return HTMLResponse("2")
 
+@app.get("/", tags=["root"])
+async def read_root() -> dict:
+    return {"message": "Welcome to your todo list."}
