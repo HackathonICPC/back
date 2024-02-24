@@ -26,10 +26,15 @@ a = "a"
 #     print(obj.get_id("e"))
 #     return HTMLResponse(f"1")
 
-# @app.post("/api/signup")
-# def f():
-#     obj.sign_up("z", "z", "z")
-#     return HTMLResponse("2")
+@app.post("/api/signup")
+def f():
+     obj.sign_up("x", "x", "x")
+     return HTMLResponse("3")
+
+@app.post("/api/signin")
+def f():
+     obj.sign_in("x", "x", "x")
+     return HTMLResponse("3")
 
 @app.get("/", tags=["root"])
 async def read_root() -> dict:
