@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from api import api_class
+from pydantic import BaseModel
 
 app = FastAPI()
 origins = ["*"]
@@ -16,26 +17,25 @@ app.add_middleware(
 
 obj = api_class()
 
-a = "a"
 
-# obj.sign_up("e", "c", "d")
-# print(obj.sign_in("e", "c"))
 
-# @app.get("/")
-# async def f():
-#     print(obj.get_id("e"))
-#     return HTMLResponse(f"1")
+class Item(BaseModel):
+    name: str
 
-@app.post("/api/signup")
-def f():
-     obj.sign_up("x", "x", "x")
-     return HTMLResponse("3")
+
+@app.get('/')
+def read_root():
+    return 1
+
+@app.post("/items/")
+async def create_item(item: Item):
+    return item
 
 @app.post("/api/signin")
-def f():
-     obj.sign_in("x", "x", "x")
-     return HTMLResponse("3")
+def read_root(username : str, password : str):
+    print(username, password)
+    return HTMLResponse(obj.sign_in("d", "z"))
 
-@app.get("/", tags=["root"])
-async def read_root() -> dict:
-    return {"message": "Welcome to your todo list."}
+@app.post("/api/signup")
+def read_root():
+    return HTMLResponse(obj.sign_up("d", "z", "vano"))

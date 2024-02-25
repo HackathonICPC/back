@@ -3,7 +3,6 @@ import mysql.connector
 class api_class:
 
     def __init__(self):
-
         self.mydb = mysql.connector.connect(
             host ="localhost",
             user ="root",
@@ -11,7 +10,7 @@ class api_class:
             passwd ="d08132004D123"
         )
 
-        self.mycursor = self.mydb.cursor(buffered=True)
+        self.mycursor = self.mydb.cursor()
         #self.mycursor.execute("""DROP TABLE users""")
 
         self.mycursor.execute("""
@@ -99,10 +98,13 @@ class api_class:
         
 
 
-    def sign_in (self, login, password): # вход
-        self.mycursor.execute(f"""SELECT * FROM users WHERE login='{login}' AND pass='{password}'""")
-        for x in self.mycursor:
-            print(x)
+    def sign_in (self, login, password): 
+        self.mycursor.execute(f"""SELECT id FROM users WHERE login='{login}' AND pass='{password}'""")
+        res = self.mycursor.fetchall()
+        if len(res) == 0:
+            return '0'
+        else:
+            return str(res[0][0])
         
 
     def sign_up (self, login, password, name):
@@ -114,12 +116,6 @@ class api_class:
         self.mycursor.execute(f"""INSERT INTO users (login, pass, username) VALUES ('{login}', '{password}', '{name}') """)
         self.mydb.commit()
         
-
-    def sign_in (self, login, password): # вход
-        self.mycursor.execute(f"""SELECT id FROM users WHERE login='{login}' AND pass='{password}'""")
-        for x in self.mycursor:
-            return x
-        return 0
 
     def add_course(self, id, name):
         self.mycursor.execute(f"""INSERT INTO courses (courseName)
