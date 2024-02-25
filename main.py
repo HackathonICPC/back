@@ -18,24 +18,15 @@ app.add_middleware(
 obj = api_class()
 
 
-
-class Item(BaseModel):
-    name: str
-
-
 @app.get('/')
 def read_root():
     return 1
 
-@app.post("/items/")
-async def create_item(item: Item):
-    return item
 
 @app.post("/api/signin")
 def read_root(username : str, password : str):
-    print(username, password)
-    return HTMLResponse(obj.sign_in("d", "z"))
+    return HTMLResponse(obj.sign_in(username, password))
 
 @app.post("/api/signup")
-def read_root():
-    return HTMLResponse(obj.sign_up("d", "z", "vano"))
+def read_root(username : str, name : str, password : str):
+    return HTMLResponse(obj.sign_up(username, password, name))
