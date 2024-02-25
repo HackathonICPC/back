@@ -14,11 +14,15 @@ class api_class:
         #self.mycursor.execute("""DROP TABLE users""")
 
         self.mycursor.execute("""
+        DROP TABLE IF EXISTS user_marks""")
+
+        self.mycursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             pass VARCHAR(255),
             username VARCHAR(255),
             login VARCHAR(255),
+            ref VARCHAR(255),
             image BLOB
         )
         """)
@@ -80,18 +84,13 @@ class api_class:
             task_id INT,
             user_id INT,
             ref VARCHAR(255),
+            marks INT,
+            markDate date,
             FOREIGN KEY(task_id) REFERENCES tasks(id)
         )
         """)
 
-        self.mycursor.execute("""
-        CREATE TABLE IF NOT EXISTS user_marks (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            marks INT,
-            markDate date,
-            FOREIGN KEY(id) REFERENCES user_tasks(id)
-        )
-        """)
+        
 
     def get_id(self, login):
         self.mycursor.execute(f"""SELECT id FROM users WHERE login='{login}'""")
@@ -109,13 +108,13 @@ class api_class:
             return str(res[0][0])
         
 
-    def sign_up (self, login, password, name, img):
+    def sign_up (self, login, password, name, img, ref):
         self.mycursor.execute(f"""SELECT * FROM users WHERE login='{login}'""")
         for x in self.mycursor:
             print("Login is already occupied")
             return
 
-        self.mycursor.execute(f"""INSERT INTO users (login, pass, username, image) VALUES ('{login}', '{password}', '{name}', {img}) """)
+        self.mycursor.execute(f"""INSERT INTO users (login, pass, username, image, ref) VALUES ('{login}', '{password}', '{name}', {img}, '{ref}') """)
         self.mydb.commit()
         
 
@@ -124,11 +123,13 @@ class api_class:
         VALUES
         f("{name}, {descrb}")
         """)
+        self.mydb.commit()
 
         self.mycursor.execute(f"""INSERT INTO course_creator (creator_id, course_id)
         VALUES
         f("{id}, SELECT LAST_INSERT_ID()")
         """)
+        self.mydb.commit()
 
 
     def to_admin(self, id):
@@ -136,15 +137,25 @@ class api_class:
         VALUES
         f("{id}")
         """)
+        self.mydb.commit()
 
     def to_course(self, id_student, id_course):
         self.mycursor.execute(f"""INSERT INTO course_user (creator_id, course_id)
         VALUES
         f("{id_student}, {id_course}")
         """)
+        self.mydb.commit()
 
     def get_nick(self, id_student):
         self.mycursor.execute(f"""SELECT username FROM users WHERE id={id_student}""")
+        res = self.mycursor.fetchall()
+        if len(res) == 0:
+            return '0'
+        else:
+            return str(res[0][0])
+
+    def get_ref(self, id_student):
+        self.mycursor.execute(f"""SELECT ref FROM users WHERE id={id_student}""")
         res = self.mycursor.fetchall()
         if len(res) == 0:
             return '0'
@@ -175,5 +186,19 @@ class api_class:
         else:
             return res[0][0]
 
+    def add_task(self, course_id, statement, mark, deadline):
+        self.mycursor.execute(f"""INSERT INTO tasks (taskStatement, maxMark, deadline)
+        VALUES
+        f("'{statement}', {mark}, {deadline}")
+        """)
+        self.mydb.commit()
+        self.mycursor.execute(f"""INSERT INTO course_tasks (task_id, course_id)
+        VALUES
+        f("SELECT LAST_INSERT_ID(), {course_id}")
+        """)
+        self.mydb.commit()
 
-# Disconnecting from the server
+    def add_user_task(self, user_task_id, mark):
+        self.mycursor.execute(f"""UPDATE user_tasks SET mark={mark} WHERE id = {user_task_id}
+        """)
+        self.mydb.commit()

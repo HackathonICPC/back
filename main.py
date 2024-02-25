@@ -35,6 +35,10 @@ def read_root(username : str, name : str, password : str):
 def read_root(id : int):
     return HTMLResponse(obj.get_nick(id))
 
+@app.get("/api/getRef")
+def read_root(id : int):
+    return HTMLResponse(obj.get_ref(id))
+
 @app.get("/api/getCourses")
 def read_root(id : int):
     return HTMLResponse(obj.get_courses(id))
@@ -46,3 +50,11 @@ def read_root():
 @app.get("/api/getImage")
 def read_root(id : int):
     return HTMLResponse(obj.get_image(id))
+
+@app.post("/api/addCourse")
+def read_root(id : int, username : str, describtion : str):
+    return HTMLResponse(obj.sign_up(id, username, describtion))
+
+@app.post("/api/addTasktoCourse")
+def read_root(id : int, statement : str, maxMark : int, deadline : str):
+    return HTMLResponse(obj.sign_up(id, statement, maxMark, deadline))
