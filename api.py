@@ -18,14 +18,16 @@ class api_class:
             id INT AUTO_INCREMENT PRIMARY KEY,
             pass VARCHAR(255),
             username VARCHAR(255),
-            login VARCHAR(255)
+            login VARCHAR(255),
+            image BLOB
         )
         """)
 
         self.mycursor.execute("""
         CREATE TABLE IF NOT EXISTS courses (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            courseName VARCHAR(255)
+            courseName VARCHAR(255),
+            description VARCHAR(255)
         )
         """)
 
@@ -107,20 +109,20 @@ class api_class:
             return str(res[0][0])
         
 
-    def sign_up (self, login, password, name):
+    def sign_up (self, login, password, name, img):
         self.mycursor.execute(f"""SELECT * FROM users WHERE login='{login}'""")
         for x in self.mycursor:
             print("Login is already occupied")
             return
 
-        self.mycursor.execute(f"""INSERT INTO users (login, pass, username) VALUES ('{login}', '{password}', '{name}') """)
+        self.mycursor.execute(f"""INSERT INTO users (login, pass, username, image) VALUES ('{login}', '{password}', '{name}', {img}) """)
         self.mydb.commit()
         
 
-    def add_course(self, id, name):
-        self.mycursor.execute(f"""INSERT INTO courses (courseName)
+    def add_course(self, id, name, descrb):
+        self.mycursor.execute(f"""INSERT INTO courses (courseName, descrb)
         VALUES
-        f("{name}")
+        f("{name}, {descrb}")
         """)
 
         self.mycursor.execute(f"""INSERT INTO course_creator (creator_id, course_id)
@@ -143,12 +145,35 @@ class api_class:
 
     def get_nick(self, id_student):
         self.mycursor.execute(f"""SELECT username FROM users WHERE id={id_student}""")
-        for x in self.mycursor:
-            return x
+        res = self.mycursor.fetchall()
+        if len(res) == 0:
+            return '0'
+        else:
+            return str(res[0][0])
 
+    def get_courses(self, id_student):
+        self.mycursor.execute(f"""SELECT * FROM course_user WHERE creator_id={id_student}""")
+        res = self.mycursor.fetchall()
+        if len(res) == 0:
+            return '0'
+        else:
+            return res
 
+    def get_all_courses(self):
+        self.mycursor.execute(f"""SELECT * FROM courses""")
+        res = self.mycursor.fetchall()
+        if len(res) == 0:
+            return '0'
+        else:
+            return res
 
-
+    def get_image(self, id_student):
+        self.mycursor.execute(f"""SELECT image FROM users WHERE id={id_student}""")
+        res = self.mycursor.fetchall()
+        if len(res) == 0:
+            return '0'
+        else:
+            return res[0][0]
 
 
 # Disconnecting from the server

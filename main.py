@@ -31,6 +31,18 @@ def read_root(username : str, password : str):
 def read_root(username : str, name : str, password : str):
     return HTMLResponse(obj.sign_up(username, password, name))
 
-@app.post("/api/signin")
-def read_root(id_student : int):
-    return HTMLResponse(obj.get_nick(id_student))
+@app.get("/api/getName")
+def read_root(id : int):
+    return HTMLResponse(obj.get_nick(id))
+
+@app.get("/api/getCourses")
+def read_root(id : int):
+    return HTMLResponse(obj.get_courses(id))
+
+@app.get("/api/getAllCourses")
+def read_root():
+    return HTMLResponse(obj.get_all_courses())
+
+@app.get("/api/getImage")
+def read_root(id : int):
+    return HTMLResponse(obj.get_image(id))
