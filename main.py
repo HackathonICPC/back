@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-from api import api_class
+from api import db_api_class
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -15,12 +15,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-obj = api_class()
+obj = db_api_class()
 
+obj.add_course(1, "course 0", "descriptions")
 
 @app.get('/')
 def read_root():
-    return 1
+    obj.add_course(1, "course 0", "descriptions")
+    return HTMLResponse(123)
 
 
 @app.post("/api/signin")

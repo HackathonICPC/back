@@ -1,6 +1,6 @@
 import mysql.connector
 
-class api_class:
+class db_api_class:
 
     def __init__(self):
         self.mydb = mysql.connector.connect(
@@ -119,15 +119,16 @@ class api_class:
         
 
     def add_course(self, id, name, descrb):
+        print(123)
         self.mycursor.execute(f"""INSERT INTO courses (courseName, descrb)
         VALUES
-        f("{name}, {descrb}")
+        ('{name}', '{descrb}')
         """)
         self.mydb.commit()
-
+        
         self.mycursor.execute(f"""INSERT INTO course_creator (creator_id, course_id)
         VALUES
-        f("{id}, SELECT LAST_INSERT_ID()")
+        ({id}, SELECT LAST_INSERT_ID())
         """)
         self.mydb.commit()
 
@@ -135,14 +136,14 @@ class api_class:
     def to_admin(self, id):
         self.mycursor.execute(f"""INSERT INTO admins (id)
         VALUES
-        f("{id}")
+        ({id})
         """)
         self.mydb.commit()
 
     def to_course(self, id_student, id_course):
         self.mycursor.execute(f"""INSERT INTO course_user (creator_id, course_id)
         VALUES
-        f("{id_student}, {id_course}")
+        ({id_student}, {id_course})
         """)
         self.mydb.commit()
 
@@ -189,12 +190,12 @@ class api_class:
     def add_task(self, course_id, statement, mark, deadline):
         self.mycursor.execute(f"""INSERT INTO tasks (taskStatement, maxMark, deadline)
         VALUES
-        f("'{statement}', {mark}, {deadline}")
+        ('{statement}', {mark}, {deadline})
         """)
         self.mydb.commit()
         self.mycursor.execute(f"""INSERT INTO course_tasks (task_id, course_id)
         VALUES
-        f("SELECT LAST_INSERT_ID(), {course_id}")
+        (SELECT LAST_INSERT_ID(), {course_id})
         """)
         self.mydb.commit()
 
