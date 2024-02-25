@@ -141,6 +141,11 @@ class api_class:
         f("{id_student}, {id_course}")
         """)
 
+    def get_nick(self, id_student):
+        self.mycursor.execute(f"""SELECT username FROM users WHERE id={id_student}""")
+        for x in self.mycursor:
+            return x
+
 
 
 

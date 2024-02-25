@@ -30,3 +30,7 @@ def read_root(username : str, password : str):
 @app.post("/api/signup")
 def read_root(username : str, name : str, password : str):
     return HTMLResponse(obj.sign_up(username, password, name))
+
+@app.post("/api/signin")
+def read_root(id_student : int):
+    return HTMLResponse(obj.get_nick(id_student))
